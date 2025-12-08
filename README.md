@@ -3,20 +3,14 @@
 
 Support for single- and three-phase PZEM-6L24 energy meters using the **lucashudson-eng/PZEMPlus** Arduino library.
 
-This ESPHome external component adds:
 
-- ✔ Full support for **PZEM-6L24**
-- ✔ Works with **multiple devices on one RS-485 bus**
-- ✔ **Energy reset** (all phases)
-- ✔ Clean ESPHome YAML integration
-
-## Requirements
+## Tested with
 
 - ESPHome 2025.11+
-- ESP32-C3 (used for tesst)
+- ESP32-C3 
 - PZEM-6L24 energy meter(s)
 - MAX3485 / MAX485 RS-485 module
-- lucashudson-eng/PZEMPlus library
+- lucashudson-eng/PZEMPlus library v0.71
 
 
 ## Directory Structure
@@ -133,4 +127,6 @@ Call this from Home Assistant.
 
 - ESPHome `button:` component may cause linking issues on ESP32-C3.  
   Use HA-side buttons or scripts instead.
+- Not all function's from Lucas his library are implemeted.
+- Calibration reoutines are not implemeted in PZEM library. 
 
