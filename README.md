@@ -127,6 +127,6 @@ Call this from Home Assistant.
 
 - ESPHome `button:` component may cause linking issues on ESP32-C3.  
   Use HA-side buttons or scripts instead.
-- Not all function's from Lucas his library are implemeted.
-- Calibration reoutines are not implemeted in PZEM library. 
+- Not all function's from Lucas his library are linked.
+- Calibration routine is not implemeted in PZEM library. 
 
