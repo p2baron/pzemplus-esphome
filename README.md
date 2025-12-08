@@ -16,6 +16,7 @@ Support for single- and three-phase PZEM-6L24 energy meters using the **lucashud
 ## Directory Structure
 
 ```
+energy-monitor.yaml
 components/
   pzem6l24_plus/
     __init__.py
