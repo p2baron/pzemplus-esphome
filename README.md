@@ -72,7 +72,7 @@ Resets **all energy counters** (A, B, C, and combined) using:
 
 ------------------------------------------------------------------------
 
-## Supported Measurements See example yml.
+## Supported Measurements See [example yml] (https://github.com/p2baron/pzemplus-esphome/blob/main/pzem6l24_plus/ESPHomeAll.yml).
 
 
 ### Per‑Phase (A / B / C)
