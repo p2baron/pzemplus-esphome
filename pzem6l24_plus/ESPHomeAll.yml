@@ -1,0 +1,190 @@
+# Example ESPHome config showing ALL available readings for ONE PZEM-6L24 device
+# (Duplicate the sensor block for address: 2 and 3 if you have multiple meters)
+
+substitutions:
+  name: "pzem-6l24-full"
+  friendly_name: "PZEM 6L24 Full Example"
+  meter_name: "Main Meter"
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  libraries:
+    # Needed because PZEMPlus includes SoftwareSerial.h (even though we use HardwareSerial)
+    - plerup/EspSoftwareSerial
+    # Pin to a specific PZEMPlus version
+    - PZEMPlus=https://github.com/lucashudson-eng/PZEMPlus.git#v0.7.3
+  platformio_options:
+    build_flags:
+      - -DPZEM_6L24
+  on_boot:
+    priority: -10
+    then:
+      # Use hardware (DIP switch) addressing: calls setAddress(0x00)
+      - lambda: |-
+          id(pzem1).use_hardware_address();
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [pzem6l24_plus]
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
+
+logger:
+  baud_rate: 0
+
+api:
+ota:
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+# Optional reset button (works with the added reset_energy_all() method)
+button:
+  - platform: template
+    name: "${meter_name} Reset Energy (All)"
+    icon: mdi:counter
+    on_press:
+      - lambda: |-
+          id(pzem1).reset_energy_all();
+
+sensor:
+  - platform: pzem6l24_plus
+    id: pzem1
+    address: 1               # Used if you choose software addressing; ignored if hardware addressing is used
+    rx_pin: 5                # RS485 RO -> ESP RX
+    tx_pin: 4                # RS485 DI -> ESP TX
+    de_re_pin: -1            # Set to GPIO if you control DE+RE; -1 if always enabled
+    update_interval: 10s
+
+    # -----------------------------
+    # Per-phase: Voltage (V)
+    # -----------------------------
+    voltage_a:
+      name: "${meter_name} Voltage A"
+    voltage_b:
+      name: "${meter_name} Voltage B"
+    voltage_c:
+      name: "${meter_name} Voltage C"
+
+    # -----------------------------
+    # Per-phase: Current (A)
+    # -----------------------------
+    current_a:
+      name: "${meter_name} Current A"
+    current_b:
+      name: "${meter_name} Current B"
+    current_c:
+      name: "${meter_name} Current C"
+
+    # -----------------------------
+    # Per-phase: Frequency (Hz)
+    # -----------------------------
+    frequency_a:
+      name: "${meter_name} Frequency A"
+    frequency_b:
+      name: "${meter_name} Frequency B"
+    frequency_c:
+      name: "${meter_name} Frequency C"
+
+    # -----------------------------
+    # Per-phase: Active / Reactive / Apparent Power
+    # Units: kW / kVar / kVA
+    # -----------------------------
+    active_power_a:
+      name: "${meter_name} Active Power A"
+    active_power_b:
+      name: "${meter_name} Active Power B"
+    active_power_c:
+      name: "${meter_name} Active Power C"
+
+    reactive_power_a:
+      name: "${meter_name} Reactive Power A"
+    reactive_power_b:
+      name: "${meter_name} Reactive Power B"
+    reactive_power_c:
+      name: "${meter_name} Reactive Power C"
+
+    apparent_power_a:
+      name: "${meter_name} Apparent Power A"
+    apparent_power_b:
+      name: "${meter_name} Apparent Power B"
+    apparent_power_c:
+      name: "${meter_name} Apparent Power C"
+
+    # -----------------------------
+    # Per-phase: Power Factor (PF)
+    # -----------------------------
+    power_factor_a:
+      name: "${meter_name} Power Factor A"
+    power_factor_b:
+      name: "${meter_name} Power Factor B"
+    power_factor_c:
+      name: "${meter_name} Power Factor C"
+
+    # -----------------------------
+    # Per-phase: Active / Reactive / Apparent Energy
+    # Units: kWh / kVarh / kVAh
+    # -----------------------------
+    active_energy_a:
+      name: "${meter_name} Active Energy A"
+    active_energy_b:
+      name: "${meter_name} Active Energy B"
+    active_energy_c:
+      name: "${meter_name} Active Energy C"
+
+    reactive_energy_a:
+      name: "${meter_name} Reactive Energy A"
+    reactive_energy_b:
+      name: "${meter_name} Reactive Energy B"
+    reactive_energy_c:
+      name: "${meter_name} Reactive Energy C"
+
+    apparent_energy_a:
+      name: "${meter_name} Apparent Energy A"
+    apparent_energy_b:
+      name: "${meter_name} Apparent Energy B"
+    apparent_energy_c:
+      name: "${meter_name} Apparent Energy C"
+
+    # -----------------------------
+    # Per-phase: Phase Angles (°)
+    # -----------------------------
+    voltage_phase_angle_a:
+      name: "${meter_name} Voltage Phase Angle A"
+    voltage_phase_angle_b:
+      name: "${meter_name} Voltage Phase Angle B"
+    voltage_phase_angle_c:
+      name: "${meter_name} Voltage Phase Angle C"
+
+    current_phase_angle_a:
+      name: "${meter_name} Current Phase Angle A"
+    current_phase_angle_b:
+      name: "${meter_name} Current Phase Angle B"
+    current_phase_angle_c:
+      name: "${meter_name} Current Phase Angle C"
+
+    # -----------------------------
+    # Totals (combined 3-phase)
+    # -----------------------------
+    total_active_power:
+      name: "${meter_name} Total Active Power"
+    total_reactive_power:
+      name: "${meter_name} Total Reactive Power"
+    total_apparent_power:
+      name: "${meter_name} Total Apparent Power"
+    total_power_factor:
+      name: "${meter_name} Total Power Factor"
+
+    total_active_energy:
+      name: "${meter_name} Total Active Energy"
+    total_reactive_energy:
+      name: "${meter_name} Total Reactive Energy"
+    total_apparent_energy:
+      name: "${meter_name} Total Apparent Energy"
