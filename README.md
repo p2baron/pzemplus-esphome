@@ -209,6 +209,8 @@ esphome:
 
 ## Reset Energy
 
+By script
+
 ```yaml
 script:
   - id: pzem1_reset_energy
@@ -216,7 +218,16 @@ script:
       - lambda: |-
           id(pzem1).reset_energy_all();
 ```
+or button
 
-Call this from Home Assistant.
+```yaml
+button:
+  - platform: template
+    name: "Reset Energy Counters"
+    icon: mdi:counter
+    on_press:
+      - lambda: |-
+          id(pzem1).reset_energy_all();
+```
 
 
