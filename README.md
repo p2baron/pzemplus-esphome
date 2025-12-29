@@ -1,7 +1,7 @@
 
 # PZEM-6L24 External Component for ESPHome
 
-Support for three-phase PZEM-6L24 energy meters using Lucas Hudson  **lucashudson-eng/PZEMPlus** [PZEMPlus](https://github.com/lucashudson-eng/PZEMPlus) library.
+Support for three-phase PZEM-6L24 energy meters using Lucas Hudsons [PZEMPlus](https://github.com/lucashudson-eng/PZEMPlus) library.
 
 
 ## Tested with
