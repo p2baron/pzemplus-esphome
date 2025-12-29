@@ -1,7 +1,7 @@
 
 # PZEM-6L24 External Component for ESPHome
 
-Support for single- and three-phase PZEM-6L24 energy meters using the **lucashudson-eng/PZEMPlus** Arduino library.
+Support for three-phase PZEM-6L24 energy meters using Lucas Hudson  **lucashudson-eng/PZEMPlus** [PZEMPlus](https://github.com/lucashudson-eng/PZEMPlus) library.
 
 
 ## Tested with
@@ -10,7 +10,19 @@ Support for single- and three-phase PZEM-6L24 energy meters using the **lucashud
 - ESP32-C3 
 - PZEM-6L24 energy meter(s)
 - MAX3485 / MAX485 RS-485 module
-- lucashudson-eng/PZEMPlus library v0.71
+- lucashudson-eng/PZEMPlus library v0.73
+
+## Supports
+-   Multiple meters on one RS‑485 bus
+-   Per‑phase **A / B / C** readings
+-   Combined (3‑phase) totals
+-   Hardware addressing support
+-   Energy counter reset support
+
+## Known Limitations / TODO
+- Not all function's from Lucas his library are linked. 
+- Calibration routine is not implemeted in PZEM library. 
+- Using multiple sensors doing multiple readings will cause some time-outs. RS‑485 / Modbus polling is slow by nature.
 
 
 ## Directory Structure
@@ -25,18 +37,101 @@ components/
     pzem6l24_plus.cpp
 ```
 
+## ESPHome‑Exposed Functions
+
+These functions can be called directly from ESPHome lambdas, scripts,
+buttons, or services.
+
+### Addressing
+
+``` cpp
+id(pzem).use_hardware_address();
+```
+
+Uses hardware (DIP switch) addressing by calling:
+
+    setAddress(0x00)
+
+``` cpp
+id(pzem).set_software_address(3);
+```
+
+Sets a software Modbus address (1‑247).
+
+------------------------------------------------------------------------
+
+### Energy Reset
+
+``` cpp
+id(pzem).reset_energy_all();
+```
+
+Resets **all energy counters** (A, B, C, and combined) using:
+
+    resetEnergy(PZEM_RESET_ENERGY_ALL)
+
+------------------------------------------------------------------------
+
+## Supported Measurements See example yml.
+
+
+### Per‑Phase (A / B / C)
+
+  Function
+  ------------------------------
+  readVoltage(phase)
+  readCurrent(phase)
+  readFrequency(phase)
+  readActivePower(phase)
+  readReactivePower(phase)
+  readApparentPower(phase)
+  readPowerFactor(phase)
+  readActiveEnergy(phase)
+  readReactiveEnergy(phase)
+  readApparentEnergy(phase)
+  readVoltagePhaseAngle(phase)
+  readCurrentPhaseAngle(phase)
+
+Phase mapping: - `0` → Phase A - `1` → Phase B - `2` → Phase C
+
+------------------------------------------------------------------------
+
+### Combined (All Phases)
+
+  Function
+  ----------------------
+  readActivePower()
+  readReactivePower()
+  readApparentPower()
+  readPowerFactor()
+  readActiveEnergy()
+  readReactiveEnergy()
+  readApparentEnergy()
+
+------------------------------------------------------------------------
+
 ## ESPHome YAML Example
 
 ```yaml
 esphome:
   name: energy-monitor
   libraries:
-    - PZEMPlus=https://github.com/lucashudson-eng/PZEMPlus.git
+    - plerup/EspSoftwareSerial
+    - PZEMPlus=https://github.com/lucashudson-eng/PZEMPlus.git#v0.7.3
+  platformio_options:
+    build_flags:
+      - -DPZEM_6L24
 
 external_components:
   - source:
       type: local
       path: components
+    components: [pzem6l24_plus]
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: arduino
 
 uart:
   id: uart_bus
@@ -60,9 +155,9 @@ sensor:
     voltage_a:
       name: "Voltage Phase A"
     voltage_b:
-      name: "Voltage Pahse B"
+      name: "Voltage Phase B"
     voltage_c:
-      name: "Voltage Pahce C"
+      name: "Voltage Phase C"
 
     current_a:
       name: "${pzem1} Current A"
@@ -124,10 +219,4 @@ script:
 
 Call this from Home Assistant.
 
-## Known Limitations
-
-- ESPHome `button:` component may cause linking issues on ESP32-C3.  
-  Use HA-side buttons or scripts instead.
-- Not all function's from Lucas his library are linked.
-- Calibration routine is not implemeted in PZEM library. 
 
